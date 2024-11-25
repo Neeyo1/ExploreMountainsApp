@@ -17,6 +17,7 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
     public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
     {
         if (await UserExists(registerDto.Username)) return BadRequest("Username is taken");
+        if (await KnownAsExists(registerDto.KnownAs)) return BadRequest("KnownAs is taken");
 
         var user = mapper.Map<AppUser>(registerDto);
         user.UserName = registerDto.Username.ToLower();
@@ -65,5 +66,10 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
     private async Task<bool> UserExists(string username)
     {
         return await userManager.Users.AnyAsync(x => x.NormalizedUserName == username.ToUpper());
+    }
+
+    private async Task<bool> KnownAsExists(string knownAs)
+    {
+        return await userManager.Users.AnyAsync(x => x.KnownAs.ToUpper() == knownAs.ToUpper());
     }
 }

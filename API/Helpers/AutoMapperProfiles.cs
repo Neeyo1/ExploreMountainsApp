@@ -12,6 +12,10 @@ public class AutoMapperProfiles : Profile
         CreateMap<AppUser, UserDto>();
         CreateMap<RegisterDto, AppUser>();
         CreateMap<LoginDto, AppUser>();
+        CreateMap<AppUser, MemberDto>()
+            .ForMember(
+                x => x.Age, y => y.MapFrom(z => z.DateOfBirth.CalculateAge())
+            );
 
         CreateMap<string, DateOnly>().ConvertUsing(s => DateOnly.Parse(s));
         CreateMap<DateTime, DateTime>().ConvertUsing(d => DateTime.SpecifyKind(d, DateTimeKind.Utc));

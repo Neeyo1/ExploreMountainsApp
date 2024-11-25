@@ -19,6 +19,7 @@ internal class Program
         builder.Services.AddControllers();
 
         builder.Services.AddScoped<ITokenService, TokenService>();
+        builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
         builder.Services.AddDbContext<DataContext>(opt =>
