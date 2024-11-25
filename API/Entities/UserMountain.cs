@@ -9,5 +9,6 @@ public class UserMountain
     public int MountainId { get; set; }
     public AppUser User { get; set; } = null!;
     public Mountain Mountain { get; set; } = null!;
+    public bool IsClimbed { get; set; } = true;
     public DateTime ClimbedAt { get; set; } = DateTime.UtcNow;
 }
