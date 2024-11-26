@@ -7,6 +7,7 @@ import { MountainListComponent } from './mountain/mountain-list/mountain-list.co
 import { AdminComponent } from './admin/admin.component';
 import { authGuard } from './_guards/auth.guard';
 import { adminGuard } from './_guards/admin.guard';
+import { MountainDetailComponent } from './mountain/mountain-detail/mountain-detail.component';
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
@@ -16,6 +17,7 @@ export const routes: Routes = [
         canActivate: [authGuard],
         children: [
             {path: 'mountains', component: MountainListComponent},
+            {path: 'mountains/:id', component: MountainDetailComponent},
             {path: 'profile', component: ProfileComponent},
             {path: 'admin', component: AdminComponent, canActivate: [adminGuard]},
         ]

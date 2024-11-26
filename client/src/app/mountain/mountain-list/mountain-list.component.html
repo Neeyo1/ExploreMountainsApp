@@ -1,1 +1,122 @@
-<p>mountain-list works!</p>
+<div class="container mt-3">
+    <form #form="ngForm" (ngSubmit)="loadMountains()" class="d-flex flex-wrap mb-3">
+          <div class="d-flex">
+              <label class="col-form-label">Name</label>
+              <input type="text" 
+                  class="form-control ms-1" 
+                  name="city"
+                  [(ngModel)]="mountainService.mountainParams().name"
+              >
+          </div>
+
+          <div class="d-flex">
+              <label class="col-form-label">Min height</label>
+              <input type="number" 
+                  class="form-control ms-1" 
+                  name="minHeight"
+                  [(ngModel)]="mountainService.mountainParams().minHeight"
+              >
+          </div>
+
+          <div class="d-flex">
+              <label class="col-form-label">Max height</label>
+              <input type="number" 
+                  class="form-control ms-1" 
+                  name="maxHeight"
+                  [(ngModel)]="mountainService.mountainParams().maxHeight"
+              >
+          </div>
+
+          <div class="d-flex">
+            <label class="col-form-label">Status</label>
+            <select name="status"
+                class="form-select ms-1" 
+                [(ngModel)]="mountainService.mountainParams().status"
+            >
+            @for (status of statusList; track status.value) {
+                <option [value]="status.value">{{status.display}}</option>
+            }
+            </select>
+          </div>
+
+          <div class="d-flex">
+            <label class="col-form-label">Order by</label>
+            <select name="orderBy"
+                class="form-select ms-1" 
+                [(ngModel)]="mountainService.mountainParams().orderBy"
+            >
+            @for (orderBy of orderByList; track orderBy.value) {
+                <option [value]="orderBy.value">{{orderBy.display}}</option>
+            }
+            </select>
+          </div>
+
+          <div class="d-flex">
+            <button class="btn btn-primary" type="submit">Filter</button>
+          </div>
+
+          <div class="d-flex">
+            <button (click)="resetFilters()" class="btn btn-primary" type="button">Reset</button>
+          </div>
+          
+          @if (accountService.roles().includes("Admin")) {
+            <div class="d-flex">
+              <button (click)="createMountain()" class="btn btn-primary" type="button">Create mountain</button>
+            </div>
+          }
+          
+    </form>
+  </div>
+  
+  <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Id</th>
+          <th scope="col">Name</th>
+          <th scope="col">Description</th>
+          <th scope="col">Height</th>
+          <th scope="col">Latitude</th>
+          <th scope="col">Longitude</th>
+          <th scope="col">Climbed at</th>
+        </tr>
+      </thead>
+      <tbody>
+          @for (mountain of mountainService.paginatedResult()?.items; track mountain.id) {
+              <tr>
+                  <td>{{mountain.id}}</td>
+                  <td>{{mountain.name}}</td>
+                  <td>{{mountain.description}}</td>
+                  <td>{{mountain.height}}</td>
+                  <td>{{mountain.latitude}}</td>
+                  <td>{{mountain.longitude}}</td>
+                  @if (mountain.isClimbed) {
+                    <td>{{mountain.climbedAt}}</td>
+                  } @else {
+                    <td>-----</td>
+                  }
+                  <td>
+                    <button class="btn btn-primary" 
+                            routerLink="/mountains/{{mountain.id}}">
+                      Details
+                    </button>
+                  </td>
+              </tr>
+          }
+      </tbody>
+    </table>
+  
+  @if (mountainService.paginatedResult()?.pagination) {
+      <div class="d-flex justify-content-center">
+          <pagination [boundaryLinks]="true" 
+                      [totalItems]="mountainService.paginatedResult()?.pagination!.totalItems"
+                      [itemsPerPage]="mountainService.paginatedResult()?.pagination!.itemsPerPage"
+                      (pageChanged)="pageChanged($event)"
+                      [(ngModel)]="mountainService.paginatedResult()?.pagination!.currentPage"
+                      [maxSize]="10"
+                      previousText="&lsaquo;" 
+                      nextText="&rsaquo;" 
+                      firstText="&laquo;" 
+                      lastText="&raquo;">
+          </pagination>   
+      </div>
+  }
