@@ -31,15 +31,13 @@ public class MountainRepository(DataContext context, IMapper mapper) : IMountain
     {
         var query = context.Mountains.AsQueryable();
 
-        if (mountainParams.Height != 0)
-        {
-            query = query.Where(x => x.Height == mountainParams.Height);
-        }
-
         if (mountainParams.Name != null)
         {
             query = query.Where(x => x.Name == mountainParams.Name);
         }
+
+        query = query.Where(x => x.Height >= mountainParams.MinHeight 
+                            && x.Height <= mountainParams.MaxHeight);
 
         query = mountainParams.Status switch
         {
