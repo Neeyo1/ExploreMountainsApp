@@ -1,6 +1,7 @@
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -13,12 +14,15 @@ public class MountainsController(IMountainRepository mountainRepository, IUserRe
     IMapper mapper) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<MountainDto>>> GetMountains()
+    public async Task<ActionResult<IEnumerable<MountainDto>>> GetMountains(
+        [FromQuery] MountainParams mountainParams)
     {
         var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
         if (user == null) return NotFound();
 
-        var mountains = await mountainRepository.GetMountainsAsync();
+        mountainParams.UserId = user.Id;
+
+        var mountains = await mountainRepository.GetMountainsAsync(mountainParams);
         foreach (var mountain in mountains)
         {
             var userMountain = await mountainRepository.GetUserMountainByIdAsync(mountain.Id, user.Id);
@@ -28,6 +32,7 @@ public class MountainsController(IMountainRepository mountainRepository, IUserRe
                 mountain.ClimbedAt = userMountain.ClimbedAt;
             }
         }
+        Response.AddPaginationHeader(mountains);
 
         return Ok(mountains);
     }

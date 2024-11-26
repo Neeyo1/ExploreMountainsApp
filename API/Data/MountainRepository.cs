@@ -1,6 +1,7 @@
 using System;
 using API.DTOs;
 using API.Entities;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -26,11 +27,37 @@ public class MountainRepository(DataContext context, IMapper mapper) : IMountain
             .FindAsync(mountainId);
     }
 
-    public async Task<IEnumerable<MountainDto>> GetMountainsAsync()
+    public async Task<PagedList<MountainDto>> GetMountainsAsync(MountainParams mountainParams)
     {
-        return await context.Mountains
-            .ProjectTo<MountainDto>(mapper.ConfigurationProvider)
-            .ToListAsync();
+        var query = context.Mountains.AsQueryable();
+
+        if (mountainParams.Height != 0)
+        {
+            query = query.Where(x => x.Height == mountainParams.Height);
+        }
+
+        if (mountainParams.Name != null)
+        {
+            query = query.Where(x => x.Name == mountainParams.Name);
+        }
+
+        query = mountainParams.Status switch
+        {
+            "climbed" => query.Where(x => x.UserMountains.Any(y => y.UserId == mountainParams.UserId)),
+            "not-climbed" => query.Where(x => !x.UserMountains.Any(y => y.UserId == mountainParams.UserId)),
+            _ => query
+        };
+
+        query = mountainParams.OrderBy switch
+        {
+            "highest" => query.OrderByDescending(x => x.Height),
+            "shortest" => query.OrderBy(x => x.Height),
+            _ => query
+        };
+
+        return await PagedList<MountainDto>.CreateAsync(
+            query.ProjectTo<MountainDto>(mapper.ConfigurationProvider), 
+            mountainParams.PageNumber, mountainParams.PageSize);
     }
 
     public async Task<UserMountain?> GetUserMountainByIdAsync(int mountainId, int userId)
