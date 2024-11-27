@@ -8,6 +8,9 @@ import { AdminComponent } from './admin/admin.component';
 import { authGuard } from './_guards/auth.guard';
 import { adminGuard } from './_guards/admin.guard';
 import { MountainDetailComponent } from './mountain/mountain-detail/mountain-detail.component';
+import { NotFoundComponent } from './errors/not-found/not-found.component';
+import { ServerErrorComponent } from './errors/server-error/server-error.component';
+import { ProfilePrivateComponent } from './errors/profile-private/profile-private.component';
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
@@ -24,5 +27,8 @@ export const routes: Routes = [
     },
     {path: 'info', component: InfoComponent},
     {path: 'register', component: RegisterComponent},
+    {path: 'not-found', component: NotFoundComponent},
+    {path: 'server-error', component: ServerErrorComponent},
+    {path: 'profile-private', component: ProfilePrivateComponent},
     {path: '**', component: HomeComponent, pathMatch: 'full'},
 ];

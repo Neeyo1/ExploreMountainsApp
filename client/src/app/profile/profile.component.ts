@@ -42,7 +42,7 @@ export class ProfileComponent implements OnInit, OnDestroy{
 
     this.memberService.getMember(memberId).subscribe({
       next: member => this.member.set(member),
-      error: _ => this.router.navigateByUrl("/")
+      error: _ => this.router.navigateByUrl("/profile-private")
     })
   }
 
