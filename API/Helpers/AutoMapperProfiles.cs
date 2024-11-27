@@ -12,10 +12,10 @@ public class AutoMapperProfiles : Profile
         CreateMap<AppUser, UserDto>();
         CreateMap<RegisterDto, AppUser>();
         CreateMap<LoginDto, AppUser>();
-        CreateMap<AppUser, MemberDto>()
-            .ForMember(
-                x => x.Age, y => y.MapFrom(z => z.DateOfBirth.CalculateAge())
-            );
+        // CreateMap<AppUser, MemberDto>()
+        //     .ForMember(
+        //         x => x.Age, y => y.MapFrom(z => z.DateOfBirth.CalculateAge())
+        //     );
         CreateMap<Mountain, MountainDto>();
         CreateMap<UserMountain, MountainDto>()
             .ForMember(x => x.Id, y => y.MapFrom(z => z.MountainId))
@@ -25,6 +25,11 @@ public class AutoMapperProfiles : Profile
             .ForMember(x => x.Latitude, y => y.MapFrom(z => z.Mountain.Latitude))
             .ForMember(x => x.Longitude, y => y.MapFrom(z => z.Mountain.Longitude));
         CreateMap<MountainCreateDto, Mountain>();
+        CreateMap<UserMountain, MemberDto>()
+            .ForMember(x => x.Id, y => y.MapFrom(z => z.UserId))
+            .ForMember(x => x.KnownAs, y => y.MapFrom(z => z.User.KnownAs))
+            .ForMember(x => x.PublicProfile, y => y.MapFrom(z => z.User.PublicProfile))
+            .ForMember(x => x.ClimbedAt, y => y.MapFrom(z => z.ClimbedAt));
 
         CreateMap<string, DateOnly>().ConvertUsing(s => DateOnly.Parse(s));
         CreateMap<DateTime, DateTime>().ConvertUsing(d => DateTime.SpecifyKind(d, DateTimeKind.Utc));

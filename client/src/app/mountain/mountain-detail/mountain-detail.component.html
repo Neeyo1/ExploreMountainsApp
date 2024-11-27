@@ -1,1 +1,107 @@
-<p>mountain-detail works!</p>
+<div>
+    <tabset>
+      <tab heading="Details">
+        <p>Mountain id: {{mountain()?.id}}</p>
+        <p>Mountain name: {{mountain()?.name}}</p>
+        <p>Mountain description: {{mountain()?.description}}</p>
+        <p>Mountain height: {{mountain()?.height}}</p>
+        <p>Mountain latitude: {{mountain()?.latitude}}</p>
+        <p>Mountain longitude: {{mountain()?.longitude}}</p>
+        @if (mountain()?.isClimbed) {
+            <p>Mountain climbed at : {{mountain()?.climbedAt}}</p>
+            <p>
+                <button class="btn btn-primary" (click)="unmarkMountainAsClimbed(mountain()!.id)">
+                    Unmark as climbed
+                </button>
+            </p>
+        } @else {
+            <p>
+                <button class="btn btn-primary" (click)="markMountainAsClimbed(mountain()!.id)">
+                    Mark as climbed
+                </button>
+            </p>
+        }
+      </tab>
+      <tab heading="People who climbed" (selectTab)="loadMembersWhoClimbedMountain()">
+        <div>
+            <form #form="ngForm" (ngSubmit)="loadMembersWhoClimbedMountain()" class="d-flex flex-wrap mb-3">
+                  <div class="d-flex">
+                      <label class="col-form-label">KnownAs</label>
+                      <input type="text" 
+                          class="form-control ms-1" 
+                          name="knownAs"
+                          [(ngModel)]="memberService.memberParams().knownAs"
+                      >
+                  </div>
+        
+                  <div class="d-flex">
+                    <label class="col-form-label">Order by</label>
+                    <select name="orderBy"
+                        class="form-select ms-1" 
+                        [(ngModel)]="memberService.memberParams().orderBy"
+                    >
+                    @for (orderBy of orderByList; track orderBy.value) {
+                        <option [value]="orderBy.value">{{orderBy.display}}</option>
+                    }
+                    </select>
+                  </div>
+        
+                  <div class="d-flex">
+                    <button class="btn btn-primary" type="submit">Filter</button>
+                  </div>
+        
+                  <div class="d-flex">
+                    <button (click)="resetFilters()" class="btn btn-primary" type="button">Reset</button>
+                  </div>          
+            </form>
+          </div>
+          
+          <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Id</th>
+                  <th scope="col">Known as</th>
+                  <th scope="col">Climbed at</th>
+                  <th scope="col">Public profile</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                  @for (member of memberService.paginatedResult()?.items; track member.id) {
+                      <tr>
+                          <td>{{member.id}}</td>
+                          <td>{{member.knownAs}}</td>
+                          <td>{{member.climbedAt}}</td>
+                          <td>{{member.publicProfile}}</td>
+                          <td>
+                            @if (member.publicProfile) {
+                                <button class="btn btn-primary" 
+                                        routerLink="/profile/{{member.id}}">
+                                    Visit profile
+                                </button>
+                            }
+                            
+                          </td>
+                      </tr>
+                  }
+              </tbody>
+            </table>
+          
+          @if (memberService.paginatedResult()?.pagination) {
+              <div class="d-flex justify-content-center">
+                  <pagination [boundaryLinks]="true" 
+                              [totalItems]="memberService.paginatedResult()?.pagination!.totalItems"
+                              [itemsPerPage]="memberService.paginatedResult()?.pagination!.itemsPerPage"
+                              (pageChanged)="pageChanged($event)"
+                              [(ngModel)]="memberService.paginatedResult()?.pagination!.currentPage"
+                              [maxSize]="10"
+                              previousText="&lsaquo;" 
+                              nextText="&rsaquo;" 
+                              firstText="&laquo;" 
+                              lastText="&raquo;">
+                  </pagination>   
+              </div>
+          }
+      </tab>
+    </tabset>
+</div>
