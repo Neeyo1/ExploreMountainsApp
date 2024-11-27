@@ -4,6 +4,10 @@ import { environment } from '../../environments/environment';
 import { PaginatedResult } from '../_models/pagination';
 import { Member } from '../_models/member';
 import { MemberParams } from '../_models/memberParams';
+import { Mountain } from '../_models/mountain';
+import { setPaginatedResponse, setPaginationHeaders } from './paginationHelper';
+import { MemberDetailed } from '../_models/memberDetailed';
+import { of, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +16,8 @@ export class MemberService {
   private http = inject(HttpClient);
   baseUrl = environment.apiUrl;
   memberCache = new Map();
-  paginatedResult = signal<PaginatedResult<Member[]> | null>(null);
+  paginatedResultMember = signal<PaginatedResult<Member[]> | null>(null);
+  paginatedResultMountain = signal<PaginatedResult<Mountain[]> | null>(null);
   memberParams = signal<MemberParams>(new MemberParams);
 
   resetMemberParams(){
@@ -22,37 +27,49 @@ export class MemberService {
   getMembersWhoClimbedMountain(){
     const response = this.memberCache.get(Object.values(this.memberParams()).join('-'));
 
-    if (response) return this.setPaginatedResponse(response);
-    let params = this.setPaginationHeaders(this.memberParams().pageNumber, this.memberParams().pageSize)
+    if (response) return setPaginatedResponse(response, this.paginatedResultMember);
+    let params = setPaginationHeaders(this.memberParams().pageNumber, this.memberParams().pageSize)
 
     params = params.append("mountainId", this.memberParams().mountainId);
     params = params.append("knownAs", this.memberParams().knownAs as string);
     params = params.append("orderBy", this.memberParams().orderBy as string);
 
-    return this.http.get<Member[]>(this.baseUrl + `mountains/${this.memberParams().mountainId}/climbedBy`, {observe: 'response', params}).subscribe({
+    return this.http.get<Member[]>(this.baseUrl + "mountains/members-who-climbed-mountain", {observe: 'response', params}).subscribe({
       next: response => {
-        this.setPaginatedResponse(response);
+        setPaginatedResponse(response, this.paginatedResultMember);
         this.memberCache.set(Object.values(this.memberParams()).join("-"), response);
       }
     });
   }
 
-  private setPaginationHeaders(pageNumber: number, pageSize: number){
-    let params = new HttpParams();
+  getMountainsClimbedByMember(){
+    const response = this.memberCache.get(Object.values(this.memberParams()).join('-'));
 
-    if (pageNumber && pageSize){
-      params = params.append("pageNumber", pageNumber);
-      params = params.append("pageSize", pageSize);
-    }
+    if (response) return setPaginatedResponse(response, this.paginatedResultMountain);
+    let params = setPaginationHeaders(this.memberParams().pageNumber, this.memberParams().pageSize)
 
-    return params;
+    params = params.append("mountainId", this.memberParams().mountainId);
+    params = params.append("knownAs", this.memberParams().knownAs as string);
+    params = params.append("orderBy", this.memberParams().orderBy as string);
+
+    return this.http.get<Mountain[]>(this.baseUrl + "users/mountains-climbed-by-member", {observe: 'response', params}).subscribe({
+      next: response => {
+        setPaginatedResponse(response, this.paginatedResultMountain);
+        this.memberCache.set(Object.values(this.memberParams()).join("-"), response);
+      }
+    });
   }
 
-  private setPaginatedResponse(response: HttpResponse<Member[]>){
-    this.paginatedResult.set({
-      items: response.body as Member[],
-      pagination: JSON.parse(response.headers.get("pagination")!)
-    })
+  getMember(id: number){
+    const member = this.memberCache.get("member-detailed-" + id);
+
+    if (member) return of(member);
+    
+    return this.http.get<MemberDetailed>(this.baseUrl + `users/${id}`).pipe(
+        tap(response => {
+            this.memberCache.set("member-detailed-" + id, response);
+        })
+    )
   }
 }
 

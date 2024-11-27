@@ -132,16 +132,14 @@ public class MountainsController(IMountainRepository mountainRepository, IUserRe
         return BadRequest("Failed to mark mountain as climbed");
     }
 
-    [HttpGet("{mountainId}/climbedBy")]
+    [HttpGet("members-who-climbed-mountain")]
     public async Task<ActionResult<IEnumerable<MountainDto>>> GetUsersWhoClimbedMountain(
-        int mountainId, [FromQuery] MemberParams memberParams)
+        [FromQuery] MemberParams memberParams)
     {
         var user = await userRepository.GetUserByUsernameAsync(User.GetUsername());
         if (user == null) return NotFound();
 
-        memberParams.MountainId = mountainId;
-
-        var users = await userRepository.GetMembersWhoClimbedMountain(memberParams);
+        var users = await userRepository.GetMembersWhoClimbedMountainAsync(memberParams);
         Response.AddPaginationHeader(users);
 
         return Ok(users);

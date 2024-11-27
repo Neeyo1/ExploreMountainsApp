@@ -5,6 +5,7 @@ import { PaginatedResult } from '../_models/pagination';
 import { Mountain } from '../_models/mountain';
 import { MountainParams } from '../_models/mountainParams';
 import { of, tap } from 'rxjs';
+import { setPaginatedResponse, setPaginationHeaders } from './paginationHelper';
 
 @Injectable({
   providedIn: 'root'
@@ -23,8 +24,8 @@ export class MountainService {
   getMountains(){
     const response = this.mountainCache.get(Object.values(this.mountainParams()).join('-'));
 
-    if (response) return this.setPaginatedResponse(response);
-    let params = this.setPaginationHeaders(this.mountainParams().pageNumber, this.mountainParams().pageSize)
+    if (response) return setPaginatedResponse(response, this.paginatedResult);
+    let params = setPaginationHeaders(this.mountainParams().pageNumber, this.mountainParams().pageSize)
 
     params = params.append("name", this.mountainParams().name as string);
     params = params.append("minHeight", this.mountainParams().minHeight);
@@ -34,7 +35,7 @@ export class MountainService {
 
     return this.http.get<Mountain[]>(this.baseUrl + "mountains", {observe: 'response', params}).subscribe({
       next: response => {
-        this.setPaginatedResponse(response);
+        setPaginatedResponse(response, this.paginatedResult);
         this.mountainCache.set(Object.values(this.mountainParams()).join("-"), response);
       }
     });
@@ -88,24 +89,6 @@ export class MountainService {
         this.mountainCache.clear();
       })
     );
-  }
-
-  private setPaginationHeaders(pageNumber: number, pageSize: number){
-    let params = new HttpParams();
-
-    if (pageNumber && pageSize){
-      params = params.append("pageNumber", pageNumber);
-      params = params.append("pageSize", pageSize);
-    }
-
-    return params;
-  }
-
-  private setPaginatedResponse(response: HttpResponse<Mountain[]>){
-    this.paginatedResult.set({
-      items: response.body as Mountain[],
-      pagination: JSON.parse(response.headers.get("pagination")!)
-    })
   }
 }
 

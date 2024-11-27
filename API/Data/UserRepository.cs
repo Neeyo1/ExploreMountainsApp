@@ -43,7 +43,7 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
             .SingleOrDefaultAsync();
     }
 
-    public async Task<PagedList<MemberDto>>GetMembersWhoClimbedMountain(MemberParams memberParams)
+    public async Task<PagedList<MemberDto>>GetMembersWhoClimbedMountainAsync(MemberParams memberParams)
     {
         var query = context.UserMountains.AsQueryable();
 
@@ -63,6 +63,27 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
 
         return await PagedList<MemberDto>.CreateAsync(
             query.ProjectTo<MemberDto>(mapper.ConfigurationProvider), 
+            memberParams.PageNumber, memberParams.PageSize);
+    }
+
+    public async Task<PagedList<MountainDto>> GetMountainsClimbedByMemberAsync(MemberParams memberParams)
+    {
+        var query = context.UserMountains.AsQueryable();
+
+        if (memberParams.KnownAs != null)
+        {
+            query = query.Where(x => x.User.KnownAs == memberParams.KnownAs);
+        }
+
+        query = memberParams.OrderBy switch
+        {
+            "most-recent" => query.OrderByDescending(x => x.ClimbedAt),
+            "most-latest" => query.OrderBy(x => x.ClimbedAt),
+            _ => query
+        };
+
+        return await PagedList<MountainDto>.CreateAsync(
+            query.ProjectTo<MountainDto>(mapper.ConfigurationProvider), 
             memberParams.PageNumber, memberParams.PageSize);
     }
 

@@ -12,10 +12,10 @@ public class AutoMapperProfiles : Profile
         CreateMap<AppUser, UserDto>();
         CreateMap<RegisterDto, AppUser>();
         CreateMap<LoginDto, AppUser>();
-        // CreateMap<AppUser, MemberDto>()
-        //     .ForMember(
-        //         x => x.Age, y => y.MapFrom(z => z.DateOfBirth.CalculateAge())
-        //     );
+        CreateMap<AppUser, MemberDetailedDto>()
+            .ForMember(
+                x => x.Age, y => y.MapFrom(z => z.DateOfBirth.CalculateAge())
+            );
         CreateMap<Mountain, MountainDto>();
         CreateMap<UserMountain, MountainDto>()
             .ForMember(x => x.Id, y => y.MapFrom(z => z.MountainId))

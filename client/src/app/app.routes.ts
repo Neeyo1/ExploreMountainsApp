@@ -18,7 +18,7 @@ export const routes: Routes = [
         children: [
             {path: 'mountains', component: MountainListComponent},
             {path: 'mountains/:id', component: MountainDetailComponent},
-            {path: 'profile', component: ProfileComponent},
+            {path: 'profile/:id', component: ProfileComponent},
             {path: 'admin', component: AdminComponent, canActivate: [adminGuard]},
         ]
     },
