@@ -1,10 +1,11 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, TemplateRef } from '@angular/core';
 import { MountainService } from '../../_services/mountain.service';
 import { AccountService } from '../../_services/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-mountain-list',
@@ -17,6 +18,7 @@ export class MountainListComponent implements OnInit, OnDestroy{
   mountainService = inject(MountainService);
   accountService = inject(AccountService);
   private toastrService = inject(ToastrService);
+  private offcanvasService = inject(NgbOffcanvas);
   statusList = [
     {value: 'climbed', display: 'Climbed'},
     {value: 'not-climbed', display: 'Not climbed'},
@@ -54,5 +56,13 @@ export class MountainListComponent implements OnInit, OnDestroy{
       this.loadMountains();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+  }
+
+  showOffcanvas(content: TemplateRef<any>) {
+		this.offcanvasService.open(content);
+	}
+
+  closeOffcanvas(offcanvas: any){
+    offcanvas.close();
   }
 }

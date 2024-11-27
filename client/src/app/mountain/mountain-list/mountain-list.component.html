@@ -1,46 +1,56 @@
-<div>
-    <form #form="ngForm" (ngSubmit)="loadMountains()" class="d-flex flex-wrap mb-3">
-          <div class="d-flex">
-              <label class="col-form-label">Name</label>
-              <input type="text" 
-                  class="form-control ms-1" 
-                  name="city"
-                  [(ngModel)]="mountainService.mountainParams().name"
-              >
+<button class="btn btn-primary" (click)="showOffcanvas(content)">Filter</button>
+@if (accountService.roles().includes("Admin")) {
+  <button (click)="createMountain()" class="btn btn-primary" type="button">Create mountain</button>
+}
+
+<ng-template #content let-offcanvas>
+  <div class="offcanvas-header">
+    <h4 class="offcanvas-title" id="offcanvas-basic-title">Filter results</h4>
+    <button type="button" class="btn-close" (click)="offcanvas.dismiss()"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div class="d-flex">
+      <form #form="ngForm" class="mx-auto" style="width: 80%;" (ngSubmit)="loadMountains()" autocomplete="off">
+          <div class="mb-3 form-floating">
+            <input 
+                type="text"
+                class="form-control"
+                name="name"
+                [(ngModel)]="mountainService.mountainParams().name">
+            <label>Name</label>
           </div>
 
-          <div class="d-flex">
-              <label class="col-form-label">Min height</label>
-              <input type="number" 
-                  class="form-control ms-1" 
-                  name="minHeight"
-                  [(ngModel)]="mountainService.mountainParams().minHeight"
-              >
+          <div class="mb-3 form-floating">
+            <input 
+                type="number"
+                class="form-control"
+                name="minHeight"
+                [(ngModel)]="mountainService.mountainParams().minHeight">
+            <label>Min height</label>
           </div>
 
-          <div class="d-flex">
-              <label class="col-form-label">Max height</label>
-              <input type="number" 
-                  class="form-control ms-1" 
-                  name="maxHeight"
-                  [(ngModel)]="mountainService.mountainParams().maxHeight"
-              >
+          <div class="mb-3 form-floating">
+            <input 
+                type="number"
+                class="form-control"
+                name="maxHeight"
+                [(ngModel)]="mountainService.mountainParams().maxHeight">
+            <label>Max height</label>
           </div>
 
-          <div class="d-flex">
-            <label class="col-form-label">Status</label>
+          <div class="mb-3 form-floating">
             <select name="status"
-                class="form-select ms-1" 
+                class="form-select" 
                 [(ngModel)]="mountainService.mountainParams().status"
             >
             @for (status of statusList; track status.value) {
                 <option [value]="status.value">{{status.display}}</option>
             }
             </select>
+            <label>Status</label>
           </div>
 
-          <div class="d-flex">
-            <label class="col-form-label">Order by</label>
+          <div class="mb-3 form-floating">
             <select name="orderBy"
                 class="form-select ms-1" 
                 [(ngModel)]="mountainService.mountainParams().orderBy"
@@ -49,24 +59,24 @@
                 <option [value]="orderBy.value">{{orderBy.display}}</option>
             }
             </select>
+            <label>Order by</label>
           </div>
 
-          <div class="d-flex">
-            <button class="btn btn-primary" type="submit">Filter</button>
+          <div class="form-group text-center">
+              <button class="btn btn-primary" type="submit">
+                Filter
+              </button>
+              <button (click)="resetFilters()" class="btn btn-primary" type="button">
+                Reset
+              </button>
+              <button (click)="closeOffcanvas(offcanvas)" class="btn btn-primary" type="button">
+                Close
+              </button>
           </div>
-
-          <div class="d-flex">
-            <button (click)="resetFilters()" class="btn btn-primary" type="button">Reset</button>
-          </div>
-          
-          @if (accountService.roles().includes("Admin")) {
-            <div class="d-flex">
-              <button (click)="createMountain()" class="btn btn-primary" type="button">Create mountain</button>
-            </div>
-          }
-          
-    </form>
+      </form>
+    </div>
   </div>
+</ng-template>
   
   <table class="table table-hover">
       <thead>
