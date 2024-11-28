@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { MountainService } from './mountain.service';
 import { MountainModalComponent } from '../modals/mountain-modal/mountain-modal.component';
 import { Mountain } from '../_models/mountain';
+import { ChangePasswordModalComponent } from '../modals/change-password-modal/change-password-modal.component';
 
 @Injectable({
   providedIn: 'root'
@@ -53,6 +54,27 @@ export class ModalService {
           let mountainForm = this.bsModalRef.content.mountainForm;
           this.mountainService.editMountain(mountain.id, mountainForm.value).subscribe({
             next: _ => this.mountainService.getMountains()
+          })
+        }
+      }
+    })
+  }
+
+  openChangePasswordModal(){
+    const config: ModalOptions = {
+      class: 'modal-lg',
+      initialState:{
+        completed: false
+      }
+    };
+    this.bsModalRef = this.modalService.show(ChangePasswordModalComponent, config);
+    this.bsModalRef.onHide?.subscribe({
+      next: () => {
+        if (this.bsModalRef && this.bsModalRef.content && this.bsModalRef.content.completed){
+          const changePasswordForm = this.bsModalRef.content.changePasswordForm;
+
+          this.accountService.changePassword(changePasswordForm.value).subscribe({
+            next: _ => this.toastrService.success("Password changed successfully")
           })
         }
       }
