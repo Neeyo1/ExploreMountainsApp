@@ -110,6 +110,16 @@
                             routerLink="/mountains/{{mountain.id}}">
                       Details
                     </button>
+                    @if (accountService.roles().includes("Admin")) {
+                      <button class="btn btn-info" 
+                              (click)="editMountain(mountain)">
+                        Edit
+                      </button>
+                      <button class="btn btn-danger" 
+                              (click)="deleteMountain(mountain.id)">
+                        Delete
+                      </button>
+                    }
                   </td>
               </tr>
           }

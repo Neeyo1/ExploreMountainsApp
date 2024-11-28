@@ -6,8 +6,8 @@ public class Mountain
     public required string Name { get; set; }
     public required string Description { get; set; }
     public int Height { get; set; }
-    public required string Latitude { get; set; }
-    public required string Longitude { get; set; }
+    public float Latitude { get; set; }
+    public float Longitude { get; set; }
 
     //Mountain - AppUser
     public ICollection<UserMountain> UserMountains { get; } = [];

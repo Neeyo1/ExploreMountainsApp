@@ -6,6 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { ModalService } from '../../_services/modal.service';
+import { Mountain } from '../../_models/mountain';
 
 @Component({
   selector: 'app-mountain-list',
@@ -19,6 +21,8 @@ export class MountainListComponent implements OnInit, OnDestroy{
   accountService = inject(AccountService);
   private toastrService = inject(ToastrService);
   private offcanvasService = inject(NgbOffcanvas);
+  private myModalService = inject(ModalService);
+  
   statusList = [
     {value: 'climbed', display: 'Climbed'},
     {value: 'not-climbed', display: 'Not climbed'},
@@ -42,7 +46,15 @@ export class MountainListComponent implements OnInit, OnDestroy{
   }
 
   createMountain(){
-    this.toastrService.info("Modal create mountain");
+    this.myModalService.openCreateMountainModal();
+  }
+
+  editMountain(mountain: Mountain){
+    this.myModalService.openEditOfficeModal(mountain);
+  }
+
+  deleteMountain(mountainId: number){
+    this.toastrService.info("Delete modal")
   }
 
   resetFilters(){
