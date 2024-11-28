@@ -21,7 +21,7 @@ public class UsersController(IUserRepository userRepository, IMapper mapper) : B
         if (userToFind == null) return NotFound();
         if (userToFind.PublicProfile == false && userToFindId != user.Id) return BadRequest("This user's info is private");
         
-        return Ok(mapper.Map<MemberDetailedDto>(user));
+        return Ok(mapper.Map<MemberDetailedDto>(userToFind));
     }
 
     [HttpGet("mountains-climbed-by-member")]
