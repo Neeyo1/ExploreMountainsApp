@@ -67,7 +67,7 @@
                 </tr>
               </thead>
               <tbody>
-                  @for (member of memberService.paginatedResultMember()?.items; track member.id) {
+                  @for (member of memberService.paginatedResult()?.items; track member.id) {
                       <tr>
                           <td>{{member.id}}</td>
                           <td>{{member.knownAs}}</td>
@@ -87,13 +87,13 @@
               </tbody>
             </table>
           
-          @if (memberService.paginatedResultMember()?.pagination) {
+          @if (memberService.paginatedResult()?.pagination) {
               <div class="d-flex justify-content-center">
                   <pagination [boundaryLinks]="true" 
-                              [totalItems]="memberService.paginatedResultMember()?.pagination!.totalItems"
-                              [itemsPerPage]="memberService.paginatedResultMember()?.pagination!.itemsPerPage"
+                              [totalItems]="memberService.paginatedResult()?.pagination!.totalItems"
+                              [itemsPerPage]="memberService.paginatedResult()?.pagination!.itemsPerPage"
                               (pageChanged)="pageChanged($event)"
-                              [(ngModel)]="memberService.paginatedResultMember()?.pagination!.currentPage"
+                              [(ngModel)]="memberService.paginatedResult()?.pagination!.currentPage"
                               [maxSize]="10"
                               previousText="&lsaquo;" 
                               nextText="&rsaquo;" 

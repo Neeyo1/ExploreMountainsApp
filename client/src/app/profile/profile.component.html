@@ -54,7 +54,7 @@
                   </tr>
               </thead>
               <tbody>
-                  @for (mountain of memberService.paginatedResultMountain()?.items; track mountain.id) {
+                  @for (mountain of mountainService.paginatedResult()?.items; track mountain.id) {
                     <tr>
                         <td>{{mountain.id}}</td>
                         <td>{{mountain.name}}</td>
@@ -78,13 +78,13 @@
               </tbody>
             </table>
           
-          @if (memberService.paginatedResultMountain()?.pagination) {
+          @if (mountainService.paginatedResult()?.pagination) {
               <div class="d-flex justify-content-center">
                   <pagination [boundaryLinks]="true" 
-                              [totalItems]="memberService.paginatedResultMountain()?.pagination!.totalItems"
-                              [itemsPerPage]="memberService.paginatedResultMountain()?.pagination!.itemsPerPage"
+                              [totalItems]="mountainService.paginatedResult()?.pagination!.totalItems"
+                              [itemsPerPage]="mountainService.paginatedResult()?.pagination!.itemsPerPage"
                               (pageChanged)="pageChanged($event)"
-                              [(ngModel)]="memberService.paginatedResultMountain()?.pagination!.currentPage"
+                              [(ngModel)]="mountainService.paginatedResult()?.pagination!.currentPage"
                               [maxSize]="10"
                               previousText="&lsaquo;" 
                               nextText="&rsaquo;" 

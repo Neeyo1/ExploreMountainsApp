@@ -16,8 +16,7 @@ export class MemberService {
   private http = inject(HttpClient);
   baseUrl = environment.apiUrl;
   memberCache = new Map();
-  paginatedResultMember = signal<PaginatedResult<Member[]> | null>(null);
-  paginatedResultMountain = signal<PaginatedResult<Mountain[]> | null>(null);
+  paginatedResult = signal<PaginatedResult<Member[]> | null>(null);
   memberParams = signal<MemberParams>(new MemberParams);
 
   resetMemberParams(){
@@ -27,7 +26,7 @@ export class MemberService {
   getMembersWhoClimbedMountain(){
     const response = this.memberCache.get(Object.values(this.memberParams()).join('-'));
 
-    if (response) return setPaginatedResponse(response, this.paginatedResultMember);
+    if (response) return setPaginatedResponse(response, this.paginatedResult);
     let params = setPaginationHeaders(this.memberParams().pageNumber, this.memberParams().pageSize)
 
     params = params.append("mountainId", this.memberParams().mountainId);
@@ -36,25 +35,7 @@ export class MemberService {
 
     return this.http.get<Member[]>(this.baseUrl + "mountains/members-who-climbed-mountain", {observe: 'response', params}).subscribe({
       next: response => {
-        setPaginatedResponse(response, this.paginatedResultMember);
-        this.memberCache.set(Object.values(this.memberParams()).join("-"), response);
-      }
-    });
-  }
-
-  getMountainsClimbedByMember(){
-    const response = this.memberCache.get(Object.values(this.memberParams()).join('-'));
-
-    if (response) return setPaginatedResponse(response, this.paginatedResultMountain);
-    let params = setPaginationHeaders(this.memberParams().pageNumber, this.memberParams().pageSize)
-
-    params = params.append("mountainId", this.memberParams().mountainId);
-    params = params.append("knownAs", this.memberParams().knownAs as string);
-    params = params.append("orderBy", this.memberParams().orderBy as string);
-
-    return this.http.get<Mountain[]>(this.baseUrl + "users/mountains-climbed-by-member", {observe: 'response', params}).subscribe({
-      next: response => {
-        setPaginatedResponse(response, this.paginatedResultMountain);
+        setPaginatedResponse(response, this.paginatedResult);
         this.memberCache.set(Object.values(this.memberParams()).join("-"), response);
       }
     });

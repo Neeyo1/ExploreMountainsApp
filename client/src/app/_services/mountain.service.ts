@@ -6,6 +6,7 @@ import { Mountain } from '../_models/mountain';
 import { MountainParams } from '../_models/mountainParams';
 import { of, tap } from 'rxjs';
 import { setPaginatedResponse, setPaginationHeaders } from './paginationHelper';
+import { MemberService } from './member.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,7 @@ export class MountainService {
   mountainCache = new Map();
   paginatedResult = signal<PaginatedResult<Mountain[]> | null>(null);
   mountainParams = signal<MountainParams>(new MountainParams);
+  memberService = inject(MemberService);
 
   resetMountainParams(){
     this.mountainParams.set(new MountainParams);
@@ -37,6 +39,24 @@ export class MountainService {
       next: response => {
         setPaginatedResponse(response, this.paginatedResult);
         this.mountainCache.set(Object.values(this.mountainParams()).join("-"), response);
+      }
+    });
+  }
+
+  getMountainsClimbedByMember(){
+    const response = this.mountainCache.get(Object.values(this.memberService.memberParams()).join('-'));
+
+    if (response) return setPaginatedResponse(response, this.paginatedResult);
+    let params = setPaginationHeaders(this.memberService.memberParams().pageNumber, this.memberService.memberParams().pageSize)
+
+    params = params.append("mountainId", this.memberService.memberParams().mountainId);
+    params = params.append("knownAs", this.memberService.memberParams().knownAs as string);
+    params = params.append("orderBy", this.memberService.memberParams().orderBy as string);
+
+    return this.http.get<Mountain[]>(this.baseUrl + "users/mountains-climbed-by-member", {observe: 'response', params}).subscribe({
+      next: response => {
+        setPaginatedResponse(response, this.paginatedResult);
+        this.mountainCache.set(Object.values(this.memberService.memberParams()).join("-"), response);
       }
     });
   }

@@ -33,7 +33,7 @@ export class MountainDetailComponent implements OnInit, OnDestroy{
 
   ngOnDestroy(): void {
     this.memberService.resetMemberParams();
-    this.memberService.paginatedResultMember.set(null);
+    this.memberService.paginatedResult.set(null);
   }
 
   loadMountain(){

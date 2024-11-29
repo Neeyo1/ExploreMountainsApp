@@ -1,1 +1,65 @@
-<p>home works!</p>
+<h1 class="text-primary">
+    ExploreMountainsApp
+</h1>
+<h4 class="text-primary">
+    All mountains you want to climb in one place!
+</h4>
+@if (accountService.currentUser()) {
+    <div class="row">
+        <div class="col-sm-6 mt-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Your achievments</h5>
+                    @if (mountainService.paginatedResult()?.pagination?.totalItems &&
+                    mountainService.paginatedResult()!.pagination!.totalItems > 0) {
+                    <p class="card-text">You climbed total
+                        {{mountainService.paginatedResult()?.pagination?.totalItems}} mountain(s)</p>
+                    <p class="card-text">Good work!</p>
+                    } @else {
+                    <p class="card-text">Nothing to display yet</p>
+                    <p class="card-text">It's good opportunity to start your journey!'</p>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 mt-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Last climbed</h5>
+                    @if (mountainService.paginatedResult()?.pagination?.totalItems &&
+                    mountainService.paginatedResult()!.pagination!.totalItems > 0) {
+                    @for (mountain of mountainService.paginatedResult()?.items; track $index) {
+                    <p class="card-text">{{$index + 1}}. {{mountain.name}} ({{mountain.height}}m)</p>
+                    }
+                    } @else {
+                    <p class="card-text">Nothing to display yet</p>
+                    <p class="card-text">It's good opportunity to start your journey!'</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6 mt-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Explore more</h5>
+                    <p class="card-text">Explore new mountains to climb!</p>
+                    <a routerLink="/mountains" class="btn btn-primary">Explore</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 mt-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Find out more about us</h5>
+                    <a routerLink="/info" class="btn btn-primary">About us</a>
+                </div>
+            </div>
+        </div>
+    </div>
+} @else {
+    <alert type="info">
+        <strong>Information!</strong> You have to log in to access your dashboard!
+    </alert>
+}

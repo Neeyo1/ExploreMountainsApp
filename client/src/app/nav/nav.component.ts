@@ -21,7 +21,8 @@ export class NavComponent {
   login(){
     this.accountService.login(this.model).subscribe({
       next: () => {
-        this.router.navigateByUrl("/")
+        this.router.navigateByUrl('/dummy', { skipLocationChange: true }).then(() => {
+          this.router.navigate(['/'])});
       }
     })
   }

@@ -7,6 +7,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { MountainService } from '../_services/mountain.service';
 
 @Component({
   selector: 'app-profile',
@@ -17,6 +18,7 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class ProfileComponent implements OnInit, OnDestroy{
   memberService = inject(MemberService);
+  mountainService = inject(MountainService);
   private toastrService = inject(ToastrService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -33,7 +35,7 @@ export class ProfileComponent implements OnInit, OnDestroy{
 
   ngOnDestroy(): void {
     this.memberService.resetMemberParams();
-    this.memberService.paginatedResultMountain.set(null);
+    this.mountainService.paginatedResult.set(null);
   }
 
   loadMember(){
@@ -54,7 +56,7 @@ export class ProfileComponent implements OnInit, OnDestroy{
     const newParams = this.memberService.memberParams();
     newParams.knownAs = this.member()!.knownAs;
     this.memberService.memberParams.set(newParams)
-    this.memberService.getMountainsClimbedByMember();
+    this.mountainService.getMountainsClimbedByMember();
   }
 
   resetFilters(){
