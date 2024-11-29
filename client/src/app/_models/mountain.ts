@@ -3,8 +3,8 @@ export interface Mountain{
     name: string;
     description: string;
     height: number;
-    latitude: string;
-    longitude: string;
+    latitude: number;
+    longitude: number;
     isClimbed: boolean;
     climbedAt: Date;
 }

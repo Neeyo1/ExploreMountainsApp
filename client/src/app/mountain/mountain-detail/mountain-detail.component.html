@@ -1,26 +1,52 @@
 <div>
     <tabset>
       <tab heading="Details">
-        <p>Mountain id: {{mountain()?.id}}</p>
-        <p>Mountain name: {{mountain()?.name}}</p>
-        <p>Mountain description: {{mountain()?.description}}</p>
-        <p>Mountain height: {{mountain()?.height}}</p>
-        <p>Mountain latitude: {{mountain()?.latitude}}</p>
-        <p>Mountain longitude: {{mountain()?.longitude}}</p>
-        @if (mountain()?.isClimbed) {
-            <p>Mountain climbed at : {{mountain()?.climbedAt}}</p>
-            <p>
-                <button class="btn btn-primary" (click)="unmarkMountainAsClimbed(mountain()!.id)">
-                    Unmark as climbed
-                </button>
-            </p>
-        } @else {
-            <p>
-                <button class="btn btn-primary" (click)="markMountainAsClimbed(mountain()!.id)">
-                    Mark as climbed
-                </button>
-            </p>
-        }
+        <div class="row">
+          <div class="col-sm-6">
+            <p>Mountain id: {{mountain()?.id}}</p>
+            <p>Mountain name: {{mountain()?.name}}</p>
+            <p>Mountain description: {{mountain()?.description}}</p>
+            <p>Mountain height: {{mountain()?.height}}</p>
+            <p>Mountain latitude: {{mountain()?.latitude}}</p>
+            <p>Mountain longitude: {{mountain()?.longitude}}</p>
+            @if (mountain()?.isClimbed) {
+                <p>Mountain climbed at : {{mountain()?.climbedAt}}</p>
+                <p>
+                    <button class="btn btn-primary" (click)="unmarkMountainAsClimbed(mountain()!.id)">
+                        Unmark as climbed
+                    </button>
+                </p>
+            } @else {
+                <p>
+                    <button class="btn btn-primary" (click)="markMountainAsClimbed(mountain()!.id)">
+                        Mark as climbed
+                    </button>
+                </p>
+            }
+          </div>
+          <div class="col-sm-6">
+            <h4 class="text-primary">
+              Location on map
+            </h4>
+            @if (mountain()?.latitude && mountain()?.longitude) {
+              <google-map height="300px" width="400px" 
+                [options]="{
+                  mapId: 'DEMO_MAP_ID',
+                  center: { lat: mountain()!.latitude, lng: mountain()!.longitude },
+                  zoom: 4,
+                }"
+              >
+                <map-advanced-marker
+                  #markerElem="mapAdvancedMarker"
+                  [position]="{ lat: mountain()!.latitude, lng: mountain()!.longitude }"
+                  [title]="mountain()!.name + ' (' + mountain()?.height + 'm)'"
+                />
+              </google-map>
+            }
+          </div>
+        </div>
+        
+        
       </tab>
       <tab heading="People who climbed" (selectTab)="loadMembersWhoClimbedMountain()">
         <div>

@@ -7,11 +7,12 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { MemberService } from '../../_services/member.service';
 import { FormsModule } from '@angular/forms';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { GoogleMapsModule } from "@angular/google-maps";
 
 @Component({
   selector: 'app-mountain-detail',
   standalone: true,
-  imports: [TabsModule, FormsModule, PaginationModule, RouterLink],
+  imports: [TabsModule, FormsModule, PaginationModule, RouterLink, GoogleMapsModule],
   templateUrl: './mountain-detail.component.html',
   styleUrl: './mountain-detail.component.css'
 })
