@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace API.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class RebuildDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -86,10 +86,8 @@ namespace API.Data.Migrations
                     Description = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Height = table.Column<int>(type: "int", nullable: false),
-                    Latitude = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Longitude = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                    Latitude = table.Column<float>(type: "float", nullable: false),
+                    Longitude = table.Column<float>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -224,6 +222,7 @@ namespace API.Data.Migrations
                 {
                     UserId = table.Column<int>(type: "int", nullable: false),
                     MountainId = table.Column<int>(type: "int", nullable: false),
+                    IsClimbed = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     ClimbedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
